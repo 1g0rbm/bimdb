@@ -23,6 +23,7 @@ type transition struct {
 	changeState  func()
 	appendLetter func(ch rune)
 	appendToken  func()
+	flushTokens  func() []string
 }
 
 type stateMachine struct {
@@ -59,6 +60,7 @@ func newStateMachine() *stateMachine {
 			finiteEvent: transition{
 				appendToken: sm.appendToken,
 				changeState: sm.toInitialState,
+				flushTokens: sm.flushTokens,
 			},
 		},
 		spaceState: {
@@ -72,6 +74,7 @@ func newStateMachine() *stateMachine {
 			finiteEvent: transition{
 				appendToken: sm.appendToken,
 				changeState: sm.toInitialState,
+				flushTokens: sm.flushTokens,
 			},
 		},
 	}
@@ -90,12 +93,10 @@ func (sm *stateMachine) parse(query string) ([]string, error) {
 		}
 	}
 
-	sm.tick(finiteEvent, ' ')
-
-	return sm.tokens, nil
+	return sm.tick(finiteEvent, ' '), nil
 }
 
-func (sm *stateMachine) tick(event int, ch rune) {
+func (sm *stateMachine) tick(event int, ch rune) []string {
 	transition := sm.transitions[sm.state][event]
 
 	if transition.changeState != nil {
@@ -109,6 +110,12 @@ func (sm *stateMachine) tick(event int, ch rune) {
 	if transition.appendToken != nil {
 		transition.appendToken()
 	}
+
+	if transition.flushTokens != nil {
+		return transition.flushTokens()
+	}
+
+	return nil
 }
 
 func (sm *stateMachine) appendLetter(ch rune) {
@@ -130,6 +137,13 @@ func (sm *stateMachine) toInitialState() {
 func (sm *stateMachine) appendToken() {
 	sm.tokens = append(sm.tokens, sm.builder.String())
 	sm.builder.Reset()
+}
+
+func (sm *stateMachine) flushTokens() []string {
+	tokens := append(make([]string, 0, len(sm.tokens)), sm.tokens...)
+	sm.tokens = sm.tokens[:0]
+
+	return tokens
 }
 
 func isWhiteSpace(ch rune) bool {
