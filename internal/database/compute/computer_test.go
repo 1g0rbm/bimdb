@@ -56,6 +56,42 @@ func TestComputeQuery(t *testing.T) {
 			parsedQuery: Query{},
 			err:         fmt.Errorf("invalid number command argument"),
 		},
+		{
+			name:        "SET with key and value return success",
+			rawQuery:    "SET key value",
+			parsedQuery: NewQuery("SET", []string{"key", "value"}),
+			err:         nil,
+		},
+		{
+			name:        "SET with one arguments return error",
+			rawQuery:    "SET",
+			parsedQuery: Query{},
+			err:         fmt.Errorf("invalid number command argument"),
+		},
+		{
+			name:        "SET without arguments return error",
+			rawQuery:    "SET",
+			parsedQuery: Query{},
+			err:         fmt.Errorf("invalid number command argument"),
+		},
+		{
+			name:        "DEL with key return success",
+			rawQuery:    "DEL key",
+			parsedQuery: NewQuery("DEL", []string{"key"}),
+			err:         nil,
+		},
+		{
+			name:        "DEL without key return error",
+			rawQuery:    "DEL",
+			parsedQuery: Query{},
+			err:         fmt.Errorf("invalid number command argument"),
+		},
+		{
+			name:        "Invalid command return error",
+			rawQuery:    "INVALID key value",
+			parsedQuery: Query{},
+			err:         fmt.Errorf("invalid command name"),
+		},
 	}
 
 	for _, tCase := range cases {
