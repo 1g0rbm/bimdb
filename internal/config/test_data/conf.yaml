@@ -3,3 +3,7 @@ network:
   max_connections: 100
   idle_timeout: "5m"
   max_message_size: "4KB"
+logger:
+  file_path: "/tmp/output.log"
+engine:
+  type: "in_memory"

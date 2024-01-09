@@ -10,6 +10,8 @@ import (
 
 type Config struct {
 	NetworkConfig *NetworkConfig `yaml:"network"`
+	LoggerConfig  *LoggerConfig  `yaml:"logger"`
+	EngineConfig  *EngineConfig  `yaml:"engine"`
 }
 
 type NetworkConfig struct {
@@ -19,7 +21,17 @@ type NetworkConfig struct {
 	IdleTimeout    time.Duration `yaml:"idle_timeout"`
 }
 
+type LoggerConfig struct {
+	FilePath string `yaml:"file_path"`
+}
+
+type EngineConfig struct {
+	Type string `yaml:"type"`
+}
+
 func Load(filename string) (*Config, error) {
+	var conf Config
+
 	if filename == "" {
 		return &Config{}, nil
 	}
@@ -29,7 +41,6 @@ func Load(filename string) (*Config, error) {
 		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
-	var conf Config
 	if err = yaml.Unmarshal(data, &conf); err != nil {
 		return nil, fmt.Errorf("failed to parse config: %w", err)
 	}
