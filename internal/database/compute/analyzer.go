@@ -9,8 +9,8 @@ const (
 )
 
 const (
-	SetCommandArgumetnsCnt = 2
-	GetCommandArgumantsCnt = 1
+	SetCommandArgumentsCnt = 2
+	GetCommandArgumentsCnt = 1
 	DelCommandArgumentsCnt = 1
 )
 
@@ -31,7 +31,7 @@ func AnalyzeQuery(tokens []string) (Query, error) {
 }
 
 func createSetQuery(arguments []string) (Query, error) {
-	if len(arguments) != SetCommandArgumetnsCnt {
+	if len(arguments) != SetCommandArgumentsCnt {
 		return Query{}, fmt.Errorf("invalid number command argument")
 	}
 
@@ -39,7 +39,7 @@ func createSetQuery(arguments []string) (Query, error) {
 }
 
 func createGetQuery(arguments []string) (Query, error) {
-	if len(arguments) != GetCommandArgumantsCnt {
+	if len(arguments) != GetCommandArgumentsCnt {
 		return Query{}, fmt.Errorf("invalid number command argument")
 	}
 

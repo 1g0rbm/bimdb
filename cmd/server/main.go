@@ -1,13 +1,15 @@
 package main
 
 import (
-	"bimdb/internal/config"
-	"bimdb/internal/provider"
 	"context"
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
+
+	"bimdb/internal/config"
+	"bimdb/internal/provider"
 )
 
 var configFileName = os.Getenv("CONFIG_FILE_NAME")
@@ -41,7 +43,7 @@ func main() {
 	}
 
 	err = server.Handle(ctx, func(ctx context.Context, bytes []byte) []byte {
-		return []byte(db.Handle(ctx, string(bytes)))
+		return []byte(db.Handle(ctx, strings.Trim(string(bytes), "\n")))
 	})
 	if err != nil {
 		log.Fatal(err)
